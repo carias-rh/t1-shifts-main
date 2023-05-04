@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shift Manager</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>Current Shift</h1>
+        <p id="currentShift">Loading...</p>
+
+        <h2>Team Members</h2>
+        <ul>
+            {% for member in team_members %}
+            <li>
+                <input type="radio" name="team_member" value="{{ member.id }}" {% if member.on_shift %}checked{% endif %}>
+                {{ member.name }}
+            </li>
+            {% endfor %}
+        </ul>
+
+        <button onclick="activateShift()">Activate Shift</button>
+        <button onclick="deleteSelectedMember()">Delete</button>
+
+    <h2>Add New Member</h2>
+    <form id="addMemberForm">
+        <input type="text" id="name" placeholder="Name">
+        <button type="submit">Add</button>
+    </form>
+
+    <script>
+        function getCurrentShift() {
+            $.getJSON("/api/shift", function(data) {
+                if (data) {
+                    $("#currentShift").text(data.name);
+                } else {
+                    $("#currentShift").text("No one is on shift.");
+                }
+            });
+        }
+
+        $("#addMemberForm").submit(function (event) {
+            event.preventDefault();
+            const name = $("#name").val();
+            $.post("/add_member", { name: name }, function () {
+                location.reload();
+            });
+        });
+
+        function activateShift() {
+            const memberId = $('input[name=team_member]:checked').val();
+            $.post("/activate_shift", { member_id: memberId }, function () {
+                getCurrentShift();
+            });
+        }
+
+        function deleteMember(memberId) {
+            $.post("/delete_member", { member_id: memberId }, function () {
+                location.reload();
+            });
+        }
+
+        // Call the function to display the current shift user when the page loads
+        getCurrentShift();
+
+        function deleteSelectedMember() {
+        const memberId = $('input[name=team_member]:checked').val();
+        if (memberId) {
+            $.post("/delete_member", { member_id: memberId }, function () {
+                location.reload();
+            });
+        } else {
+            alert("Please select a team member to delete.");
+        }
+}
+    </script>
+</body>
+</html>
