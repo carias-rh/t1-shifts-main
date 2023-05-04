@@ -4,6 +4,20 @@ app = Flask(__name__)
 
 # Sample data - Replace this with your own data or a database later
 team_members = [{"id": 1, "name": "John Doe", "on_shift": False}, {"id": 2, "name": "Jane Doe", "on_shift": False}]
+team_members = [
+    {"id": 1, "name": "Abhishek Kumar", "on_shift": False},
+    {"id": 2, "name": "Bhawyya Mittal", "on_shift": False},
+    {"id": 3, "name": "Mohammed Tahmeed", "on_shift": False},
+    {"id": 4, "name": "Neha Singh", "on_shift": False},
+    {"id": 5, "name": "Nicol Castillo", "on_shift": False},
+    {"id": 6, "name": "Ranita Saha", "on_shift": False},
+    {"id": 7, "name": "Roberto Casarrubios", "on_shift": False},
+    {"id": 8, "name": "Shashi Singh", "on_shift": False},
+    {"id": 9, "name": "Veerabahu Thamizh Selvan V", "on_shift": False},
+    {"id": 10, "name": "Vidyashree G", "on_shift": False},
+    {"id": 11, "name": "Vikas Singh", "on_shift": False},
+    {"id": 12, "name": "Waseem Patel", "on_shift": False},
+]
 
 @app.route('/')
 def index():
@@ -25,6 +39,15 @@ def activate_shift():
         else:
             member['on_shift'] = False
     return "Shift activated"
+
+@app.route('/disable_shift', methods=['POST'])
+def disable_shift():
+    global team_members
+    for member in team_members:
+        if member['on_shift']:
+            member['on_shift'] = False
+            break
+    return "Shift disabled"
 
 @app.route('/api/shift', methods=['GET'])
 def get_current_shift():

@@ -22,8 +22,9 @@
             </li>
             {% endfor %}
         </ul>
-
+        <div></div>
         <button onclick="activateShift()">Activate Shift</button>
+        <button onclick="disableShift()">Disable Shift</button>
         <button onclick="deleteSelectedMember()">Delete</button>
 
     <h2>Add New Member</h2>
@@ -54,6 +55,12 @@
         function activateShift() {
             const memberId = $('input[name=team_member]:checked').val();
             $.post("/activate_shift", { member_id: memberId }, function () {
+                getCurrentShift();
+            });
+        }
+
+        function disableShift() {
+            $.post("/disable_shift", function () {
                 getCurrentShift();
             });
         }

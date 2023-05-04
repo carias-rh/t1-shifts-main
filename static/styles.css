@@ -11,6 +11,19 @@ h1, h2 {
     color: #c00;
 }
 
+
+ul {
+    list-style: none;
+    padding: 0;
+    text-align: right;
+    display: inline-block;
+}
+
+li {
+    padding: 2px 0;
+    text-align: left;
+}
+
 button {
     background-color: #c00;
     color: white;
