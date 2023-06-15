@@ -52,6 +52,8 @@ def disable_shift():
 @app.route('/api/shift', methods=['GET'])
 def get_current_shift():
     current_shift = next((member for member in team_members if member["on_shift"]), None)
+    if not current_shift:
+        current_shift = {"id": 0, "name": "None", "on_shift": True}
     return jsonify(current_shift)
 
 @app.route('/delete_member', methods=['POST'])
