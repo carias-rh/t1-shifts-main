@@ -36,7 +36,7 @@
     <script>
         function getCurrentShift() {
             $.getJSON("/api/shift", function(data) {
-                if (data) {
+                if (data.name != "None") {
                     $("#currentShift").text(data.name);
                 } else {
                     $("#currentShift").text("No one is on shift.");
