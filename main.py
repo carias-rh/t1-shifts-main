@@ -1,23 +1,25 @@
+from os import abort
+
 from flask import Flask, render_template, request, jsonify
 
 app = Flask(__name__)
 
 # Sample data - Replace this with your own data or a database later
-team_members = [{"id": 1, "name": "John Doe", "on_shift": False}, {"id": 2, "name": "Jane Doe", "on_shift": False}]
 team_members = [
-    {"id": 1, "name": "Abhishek Kumar", "on_shift": False},
-    {"id": 2, "name": "Bhawyya Mittal", "on_shift": False},
-    {"id": 3, "name": "Mohammed Tahmeed", "on_shift": False},
-    {"id": 4, "name": "Neha Singh", "on_shift": False},
-    {"id": 5, "name": "Nicol Castillo", "on_shift": False},
-    {"id": 6, "name": "Ranita Saha", "on_shift": False},
-    {"id": 7, "name": "Roberto Casarrubios", "on_shift": False},
-    {"id": 8, "name": "Shashi Singh", "on_shift": False},
-    {"id": 9, "name": "Veerabahu Thamizh Selvan V", "on_shift": False},
-    {"id": 10, "name": "Vidyashree G", "on_shift": False},
-    {"id": 11, "name": "Vikas Singh", "on_shift": False},
-    {"id": 12, "name": "Waseem Patel", "on_shift": False},
+    {"id": 1, "name": "Abhishek Kumar", "on_shift": False, "round_robin": False},
+    {"id": 2, "name": "Bhawyya Mittal", "on_shift": False, "round_robin": False},
+    {"id": 3, "name": "Mohammed Tahmeed", "on_shift": False, "round_robin": False},
+    {"id": 4, "name": "Neha Singh", "on_shift": False, "round_robin": False},
+    {"id": 5, "name": "Nicol Castillo (LX)", "on_shift": False, "round_robin": False},
+    {"id": 6, "name": "Ranita Saha", "on_shift": False, "round_robin": False},
+    {"id": 7, "name": "Roberto Casarrubios", "on_shift": False, "round_robin": False},
+    {"id": 8, "name": "Shashi Singh", "on_shift": False, "round_robin": False},
+    {"id": 9, "name": "Veerabahu Thamizh Selvan V", "on_shift": False, "round_robin": False},
+    {"id": 10, "name": "Vidyashree G", "on_shift": False, "round_robin": False},
+    {"id": 11, "name": "Vikas Singh", "on_shift": False, "round_robin": False},
+    {"id": 12, "name": "Waseem Patel", "on_shift": False, "round_robin": False}
 ]
+
 
 @app.route('/')
 def index():
@@ -49,11 +51,33 @@ def disable_shift():
             break
     return "Shift disabled"
 
+
 @app.route('/api/shift', methods=['GET'])
 def get_current_shift():
+    global team_members
     current_shift = next((member for member in team_members if member["on_shift"]), None)
+
     if not current_shift:
-        current_shift = {"id": 0, "name": "None", "on_shift": True}
+        # If no one is on shift, select the first member with round_robin = True
+        current_shift = next((member for member in team_members if member["round_robin"]), None)
+        if current_shift:
+            current_shift['on_shift'] = True
+        else:
+            current_shift = {"id": 0, "name": "None", "on_shift": True}
+    elif next((member for member in team_members if member["round_robin"]), None):
+        # If round robin is enabled, shift to the next member
+        current_index = team_members.index(current_shift)
+        current_shift['on_shift'] = False
+        next_member = None
+        for i in range(current_index + 1, current_index + len(team_members)):
+            if team_members[i % len(team_members)]['round_robin']:
+                next_member = team_members[i % len(team_members)]
+                break
+        if next_member:
+            next_member['on_shift'] = True
+            current_shift = next_member
+    return jsonify(current_shift)
+
     return jsonify(current_shift)
 
 @app.route('/delete_member', methods=['POST'])
@@ -62,6 +86,27 @@ def delete_member():
     global team_members
     team_members = [member for member in team_members if member['id'] != member_id]
     return "Member deleted"
+
+
+@app.route('/update_round_robin', methods=['POST'])
+def update_round_robin():
+    if 'member_id' not in request.form or 'round_robin' not in request.form:
+        abort(400)  # Bad request
+    member_id = int(request.form['member_id'])
+    round_robin = request.form['round_robin'] == 'true'
+    for member in team_members:
+        if member['id'] == member_id:
+            member['round_robin'] = round_robin
+            break
+    return "Round Robin Updated"
+
+
+@app.route('/deactivate_round_robin', methods=['POST'])
+def deactivate_round_robin():
+    for member in team_members:
+        member['round_robin'] = False
+    return "Round robin deactivated"
+
 
 
 if __name__ == '__main__':

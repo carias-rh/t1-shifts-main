@@ -1,5 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
+
+
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -14,19 +17,28 @@
         <h1>Current Shift</h1>
         <p id="currentShift">Loading...</p>
 
+
         <h2>Team Members</h2>
-        <ul>
+        <ul id="teamList">
             {% for member in team_members %}
             <li>
                 <input type="radio" name="team_member" value="{{ member.id }}" {% if member.on_shift %}checked{% endif %}>
+                <input type="checkbox" class="round_robin" value="{{ member.id }}" style="display: none;" {% if member.round_robin %}checked{% endif %}>
                 {{ member.name }}
             </li>
             {% endfor %}
         </ul>
+
         <div></div>
         <button onclick="activateShift()">Activate Shift</button>
         <button onclick="disableShift()">Disable Shift</button>
         <button onclick="deleteSelectedMember()">Delete</button>
+
+        <h3>Round Robin</h3>
+        <label class="switch">
+            <input type="checkbox" id="roundRobinSwitch">
+            <span class="slider round"></span>
+        </label>
 
     <h2>Add New Member</h2>
     <form id="addMemberForm">
@@ -35,6 +47,43 @@
     </form>
 
     <script>
+        // When the page loads
+        $(document).ready(function() {
+            // Check the stored value of the round robin switch
+            if (localStorage.getItem('roundRobinSwitch') === 'false') {
+                // If it's false, uncheck all checkboxes
+                $('.round_robin').prop('checked', false);
+            }
+        });
+
+        $("#roundRobinSwitch").change(function() {
+            // Show or hide the round_robin checkboxes
+            $(".round_robin").toggle();
+
+            // When the switch is turned off, set all team members' round_robin attributes to False
+            if (!$(this).is(':checked')) {
+                $.post("/deactivate_round_robin", function() {
+                    location.reload();
+                });
+
+                // Also uncheck all checkboxes and store the value in the local storage
+                $('.round_robin').prop('checked', false);
+                localStorage.setItem('roundRobinSwitch', 'false');
+            } else {
+                // If the switch is turned on, store this value in the local storage
+                localStorage.setItem('roundRobinSwitch', 'true');
+            }
+
+            // When a checkbox is clicked, update the member's round_robin status
+            $(".round_robin").change(function() {
+                const memberId = $(this).val();
+                const roundRobinStatus = $(this).is(':checked');
+                $.post("/update_round_robin", { member_id: memberId, round_robin: roundRobinStatus }, function() {
+                    getCurrentShift();
+                });
+            });
+        });
+
         function getCurrentShift() {
             $.getJSON("/api/shift", function(data) {
                 if (data.name != "None") {
