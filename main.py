@@ -28,7 +28,7 @@ def index():
 @app.route('/add_member', methods=['POST'])
 def add_member():
     name = request.form['name']
-    new_member = {"id": len(team_members) + 1, "name": name, "on_shift": False}
+    new_member = {"id": len(team_members) + 1, "name": name, "on_shift": False, "round_robin": False}
     team_members.append(new_member)
     return "Member added"
 
@@ -63,7 +63,7 @@ def get_current_shift():
         if current_shift:
             current_shift['on_shift'] = True
         else:
-            current_shift = {"id": 0, "name": "None", "on_shift": True}
+            current_shift = {"id": 0, "name": "None", "on_shift": True, "round_robin": False}
     elif next((member for member in team_members if member["round_robin"]), None):
         # If round robin is enabled, shift to the next member
         current_index = team_members.index(current_shift)
