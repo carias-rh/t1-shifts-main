@@ -105,6 +105,7 @@ def update_round_robin():
 def deactivate_round_robin():
     for member in team_members:
         member['round_robin'] = False
+        member['on_shift'] = False
     return "Round robin deactivated"
 
 

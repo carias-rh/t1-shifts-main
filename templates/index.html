@@ -78,9 +78,7 @@
             $(".round_robin").change(function() {
                 const memberId = $(this).val();
                 const roundRobinStatus = $(this).is(':checked');
-                $.post("/update_round_robin", { member_id: memberId, round_robin: roundRobinStatus }, function() {
-                    getCurrentShift();
-                });
+                $.post("/update_round_robin", { member_id: memberId, round_robin: roundRobinStatus });
             });
         });
 
