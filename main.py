@@ -1,10 +1,10 @@
 from os import abort
 
 from flask import Flask, render_template, request, jsonify
+from random import shuffle
 
 app = Flask(__name__)
 
-# Sample data - Replace this with your own data or a database later
 team_members = [
     {"id": 1, "name": "Abhishek Kumar", "on_shift": False, "round_robin": False},
     {"id": 2, "name": "Bhawyya Mittal", "on_shift": False, "round_robin": False},
@@ -21,17 +21,15 @@ team_members = [
     {"id": 13, "name": "Waseem Patel", "on_shift": False, "round_robin": False}
 ]
 
+def sort_json_list(json_list):
+    json_list.sort(key=lambda x: x['name'].lower())
+    return json_list
+
 
 @app.route('/')
 def index():
     return render_template('index.html', team_members=team_members)
 
-@app.route('/add_member', methods=['POST'])
-def add_member():
-    name = request.form['name']
-    new_member = {"id": len(team_members) + 1, "name": name, "on_shift": False, "round_robin": False}
-    team_members.append(new_member)
-    return "Member added"
 
 @app.route('/activate_shift', methods=['POST'])
 def activate_shift():
@@ -43,6 +41,7 @@ def activate_shift():
             member['on_shift'] = False
     return "Shift activated"
 
+
 @app.route('/disable_shift', methods=['POST'])
 def disable_shift():
     global team_members
@@ -51,6 +50,24 @@ def disable_shift():
             member['on_shift'] = False
             break
     return "Shift disabled"
+
+
+@app.route('/add_member', methods=['POST'])
+def add_member():
+    name = request.form['name']
+    new_member = {"id": len(team_members) + 1, "name": name, "on_shift": False, "round_robin": False}
+    team_members.append(new_member)
+    sort_json_list(team_members)
+    return "Member added"
+
+
+@app.route('/delete_member', methods=['POST'])
+def delete_member():
+    member_id = int(request.form['member_id'])
+    global team_members
+    team_members = [member for member in team_members if member['id'] != member_id]
+    sort_json_list(team_members)
+    return "Member deleted"
 
 
 @app.route('/api/shift', methods=['GET'])
@@ -80,14 +97,6 @@ def get_current_shift():
     return jsonify(current_shift)
 
 
-@app.route('/delete_member', methods=['POST'])
-def delete_member():
-    member_id = int(request.form['member_id'])
-    global team_members
-    team_members = [member for member in team_members if member['id'] != member_id]
-    return "Member deleted"
-
-
 @app.route('/update_round_robin', methods=['POST'])
 def update_round_robin():
     if 'member_id' not in request.form or 'round_robin' not in request.form:
@@ -105,6 +114,7 @@ def update_round_robin():
 def activate_round_robin():
     for member in team_members:
         member['round_robin'] = True
+    shuffle(team_members)
     return "Round robin activated"
 
 
@@ -113,11 +123,14 @@ def deactivate_round_robin():
     for member in team_members:
         member['round_robin'] = False
         member['on_shift'] = False
+    sort_json_list(team_members)
     return "Round robin deactivated"
+
 
 @app.route('/api/members', methods=['GET'])
 def get_members():
     return jsonify(team_members)
+
 
 if __name__ == '__main__':
     app.run(host="0.0.0.0")
