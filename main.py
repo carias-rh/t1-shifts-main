@@ -11,7 +11,7 @@ team_members = [
     {"id": 3, "name": "Jingyu Wang", "on_shift": False, "round_robin": False},
     {"id": 4, "name": "Mohammed Tahmeed", "on_shift": False, "round_robin": False},
     {"id": 5, "name": "Neha Singh", "on_shift": False, "round_robin": False},
-    {"id": 6, "name": "Nicol Castillo (LX)", "on_shift": False, "round_robin": False},
+    {"id": 6, "name": "Nicol Castillo", "on_shift": False, "round_robin": False},
     {"id": 7, "name": "Ranita Saha", "on_shift": False, "round_robin": False},
     {"id": 8, "name": "Sunnykumar Choudhary", "on_shift": False, "round_robin": False},
     {"id": 9, "name": "Tianting Shi", "on_shift": False, "round_robin": False},
