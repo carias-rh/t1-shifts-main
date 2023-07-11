@@ -54,6 +54,7 @@
                 // If it's false, uncheck all checkboxes
                 $('.round_robin').prop('checked', false);
             }
+            updateRoundRobinCheckBoxes()
         });
 
         $("#roundRobinSwitch").change(function() {
@@ -66,14 +67,11 @@
                     location.reload();
                 });
 
-                // Also uncheck all checkboxes and store the value in the local storage
-                $('.round_robin').prop('checked', false);
-                localStorage.setItem('roundRobinSwitch', 'false');
             } else {
-                // If the switch is turned on, store this value in the local storage
-                localStorage.setItem('roundRobinSwitch', 'true');
+                $.post("/activate_round_robin", function() {
+                    location.reload();
+                });
             }
-
             // When a checkbox is clicked, update the member's round_robin status
             $(".round_robin").change(function() {
                 const memberId = $(this).val();
@@ -81,6 +79,41 @@
                 $.post("/update_round_robin", { member_id: memberId, round_robin: roundRobinStatus });
             });
         });
+
+        function updateRoundRobinCheckBoxes() {
+            $.getJSON("/api/members", function(data) {
+                var html = '';
+                data.forEach(function(member) {
+                    html += '<li>';
+                    html += '<input type="radio" name="team_member" value="' + member.id + '"';
+                    if (member.on_shift) html += ' checked';
+                    html += '>';
+
+                    // Include the round robin checkbox only if the switch is on
+                    if ($("#roundRobinSwitch").is(':checked')) {
+                        html += '<input type="checkbox" class="round_robin" value="' + member.id + '"';
+                        if (member.round_robin) html += ' checked';
+                        html += '>';
+                    }
+                    html += member.name; // Move the name after the checkbox
+                    html += '</li>';
+                });
+
+                // Replace the current list of team members with the updated list
+                $("ul").html(html);
+
+                // If the round robin switch is on, bind the checkbox click event
+                if ($("#roundRobinSwitch").is(':checked')) {
+                    // When a checkbox is clicked, update the member's round_robin status
+                    $(".round_robin").change(function() {
+                        const memberId = $(this).val();
+                        const roundRobinStatus = $(this).is(':checked');
+                        $.post("/update_round_robin", { member_id: memberId, round_robin: roundRobinStatus });
+                    });
+                }
+            });
+        }
+
 
         function getCurrentShift() {
             $.getJSON("/api/shift", function(data) {

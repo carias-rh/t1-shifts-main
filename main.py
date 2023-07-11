@@ -8,16 +8,17 @@ app = Flask(__name__)
 team_members = [
     {"id": 1, "name": "Abhishek Kumar", "on_shift": False, "round_robin": False},
     {"id": 2, "name": "Bhawyya Mittal", "on_shift": False, "round_robin": False},
-    {"id": 3, "name": "Mohammed Tahmeed", "on_shift": False, "round_robin": False},
-    {"id": 4, "name": "Neha Singh", "on_shift": False, "round_robin": False},
-    {"id": 5, "name": "Nicol Castillo (LX)", "on_shift": False, "round_robin": False},
-    {"id": 6, "name": "Ranita Saha", "on_shift": False, "round_robin": False},
-    {"id": 7, "name": "Roberto Casarrubios", "on_shift": False, "round_robin": False},
-    {"id": 8, "name": "Shashi Singh", "on_shift": False, "round_robin": False},
-    {"id": 9, "name": "Veerabahu Thamizh Selvan V", "on_shift": False, "round_robin": False},
-    {"id": 10, "name": "Vidyashree G", "on_shift": False, "round_robin": False},
-    {"id": 11, "name": "Vikas Singh", "on_shift": False, "round_robin": False},
-    {"id": 12, "name": "Waseem Patel", "on_shift": False, "round_robin": False}
+    {"id": 3, "name": "Jingyu Wang", "on_shift": False, "round_robin": False},
+    {"id": 4, "name": "Mohammed Tahmeed", "on_shift": False, "round_robin": False},
+    {"id": 5, "name": "Neha Singh", "on_shift": False, "round_robin": False},
+    {"id": 6, "name": "Nicol Castillo (LX)", "on_shift": False, "round_robin": False},
+    {"id": 7, "name": "Ranita Saha", "on_shift": False, "round_robin": False},
+    {"id": 8, "name": "Sunnykumar Choudhary", "on_shift": False, "round_robin": False},
+    {"id": 9, "name": "Tianting Shi", "on_shift": False, "round_robin": False},
+    {"id": 10, "name": "Veerabahu Thamizh Selvan V", "on_shift": False, "round_robin": False},
+    {"id": 11, "name": "Vidyashree G", "on_shift": False, "round_robin": False},
+    {"id": 12, "name": "Vikas Singh", "on_shift": False, "round_robin": False},
+    {"id": 13, "name": "Waseem Patel", "on_shift": False, "round_robin": False}
 ]
 
 
@@ -78,7 +79,6 @@ def get_current_shift():
             current_shift = next_member
     return jsonify(current_shift)
 
-    return jsonify(current_shift)
 
 @app.route('/delete_member', methods=['POST'])
 def delete_member():
@@ -101,6 +101,13 @@ def update_round_robin():
     return "Round Robin Updated"
 
 
+@app.route('/activate_round_robin', methods=['POST'])
+def activate_round_robin():
+    for member in team_members:
+        member['round_robin'] = True
+    return "Round robin activated"
+
+
 @app.route('/deactivate_round_robin', methods=['POST'])
 def deactivate_round_robin():
     for member in team_members:
@@ -108,7 +115,9 @@ def deactivate_round_robin():
         member['on_shift'] = False
     return "Round robin deactivated"
 
-
+@app.route('/api/members', methods=['GET'])
+def get_members():
+    return jsonify(team_members)
 
 if __name__ == '__main__':
     app.run(host="0.0.0.0")
