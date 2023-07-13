@@ -49,12 +49,9 @@
     <script>
         // When the page loads
         $(document).ready(function() {
-            // Check the stored value of the round robin switch
-            if (localStorage.getItem('roundRobinSwitch') === 'false') {
-                // If it's false, uncheck all checkboxes
-                $('.round_robin').prop('checked', false);
-            }
+            initializeRoundRobinStatus();
             updateRoundRobinCheckBoxes()
+
         });
 
         $("#roundRobinSwitch").change(function() {
@@ -64,20 +61,14 @@
             // When the switch is turned off, set all team members' round_robin attributes to False
             if (!$(this).is(':checked')) {
                 $.post("/deactivate_round_robin", function() {
-                    location.reload();
+                    updateRoundRobinCheckBoxes()
                 });
 
             } else {
                 $.post("/activate_round_robin", function() {
-                    location.reload();
+                    updateRoundRobinCheckBoxes()
                 });
             }
-            // When a checkbox is clicked, update the member's round_robin status
-            $(".round_robin").change(function() {
-                const memberId = $(this).val();
-                const roundRobinStatus = $(this).is(':checked');
-                $.post("/update_round_robin", { member_id: memberId, round_robin: roundRobinStatus });
-            });
         });
 
         function updateRoundRobinCheckBoxes() {
@@ -113,7 +104,26 @@
                 }
             });
         }
-
+        function initializeRoundRobinStatus() {
+            $.getJSON("/api/members", function(data) {
+                var isRoundRobinActive = false;
+                data.forEach(function(member) {
+                    // If this member has round_robin set to True, set isRoundRobinActive to true
+                    if (member.round_robin) {
+                        isRoundRobinActive = true;
+                    }
+                    // Set the checked property of this member's checkbox to their round_robin status
+                    $('input.round_robin[value="' + member.id + '"]').prop('checked', member.round_robin);
+                });
+                // Set the checked property of the round robin toggle button to isRoundRobinActive
+                $('#roundRobinSwitch').prop('checked', isRoundRobinActive);
+                if (isRoundRobinActive) {
+                    $(".round_robin").show();
+                } else {
+                    $(".round_robin").hide();
+                }
+            });
+        }
 
         function getCurrentShift() {
             $.getJSON("/api/shift", function(data) {
