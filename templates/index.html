@@ -171,6 +171,9 @@
             });
         }
 
+        // Call the function to display the current shift user when the page loads
+        getCurrentShift();
+
         function deleteSelectedMember() {
         const memberId = $('input[name=team_member]:checked').val();
         if (memberId) {
@@ -180,8 +183,6 @@
         } else {
             alert("Please select a team member to delete.");
         }
-        // Call the function to display the current shift user when the page loads
-        getCurrentShift();
 }
     </script>
 </body>
