@@ -72,6 +72,14 @@ def delete_member():
 
 @app.route('/api/shift', methods=['GET'])
 def get_current_shift():
+    current_shift = next((member for member in team_members if member["on_shift"]), None)
+    if not current_shift:
+        current_shift = {"id": 0, "name": "None", "on_shift": True, "round_robin": False}
+    return jsonify(current_shift)
+
+
+@app.route('/api/round_robin', methods=['GET'])
+def get_round_robin_shift():
     global team_members
     current_shift = next((member for member in team_members if member["on_shift"]), None)
 

@@ -51,7 +51,6 @@
         $(document).ready(function() {
             initializeRoundRobinStatus();
             updateRoundRobinCheckBoxes()
-
         });
 
         $("#roundRobinSwitch").change(function() {
@@ -62,11 +61,12 @@
             if (!$(this).is(':checked')) {
                 $.post("/deactivate_round_robin", function() {
                     updateRoundRobinCheckBoxes()
+                    getCurrentShift();
                 });
-
             } else {
                 $.post("/activate_round_robin", function() {
                     updateRoundRobinCheckBoxes()
+                    getRoundRobinCurrentShift()
                 });
             }
         });
@@ -124,6 +124,15 @@
                 }
             });
         }
+        function getRoundRobinCurrentShift() {
+            $.getJSON("/api/round_robin", function(data) {
+                if (data.name != "None") {
+                    $("#currentShift").text(data.name);
+                } else {
+                    $("#currentShift").text("No one is on shift.");
+                }
+            });
+        }
 
         function getCurrentShift() {
             $.getJSON("/api/shift", function(data) {
@@ -162,9 +171,6 @@
             });
         }
 
-        // Call the function to display the current shift user when the page loads
-        getCurrentShift();
-
         function deleteSelectedMember() {
         const memberId = $('input[name=team_member]:checked').val();
         if (memberId) {
@@ -174,6 +180,8 @@
         } else {
             alert("Please select a team member to delete.");
         }
+        // Call the function to display the current shift user when the page loads
+        getCurrentShift();
 }
     </script>
 </body>
