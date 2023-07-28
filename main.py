@@ -18,7 +18,7 @@ team_members = [
     {"id": 10, "name": "Veerabahu Thamizh Selvan V", "on_shift": False, "round_robin": False},
     {"id": 11, "name": "Vidyashree G", "on_shift": False, "round_robin": False},
     {"id": 12, "name": "Vikas Singh", "on_shift": False, "round_robin": False},
-    {"id": 13, "name": "Waseem Patel", "on_shift": False, "round_robin": False}
+    {"id": 13, "name": "Abdul Patel", "on_shift": False, "round_robin": False}
 ]
 
 def sort_json_list(json_list):
