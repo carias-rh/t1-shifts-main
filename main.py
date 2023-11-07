@@ -1,4 +1,5 @@
 from os import abort
+import logging
 
 from flask import Flask, render_template, request, jsonify
 from random import shuffle
@@ -21,6 +22,8 @@ team_members = [
     {"id": 13, "name": "Vikas Singh", "on_shift": False, "round_robin": False}
 ]
 
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+
 def sort_json_list(json_list):
     json_list.sort(key=lambda x: x['name'].lower())
     return json_list
@@ -37,6 +40,7 @@ def activate_shift():
     for member in team_members:
         if member['id'] == member_id:
             member['on_shift'] = True
+            logging.info(f"{member['name']} activated shift")
         else:
             member['on_shift'] = False
     return "Shift activated"
@@ -48,6 +52,7 @@ def disable_shift():
     for member in team_members:
         if member['on_shift']:
             member['on_shift'] = False
+            logging.info(f"{member['name']} disabled shift")
             break
     return "Shift disabled"
 
@@ -60,6 +65,7 @@ def add_member():
     new_member = {"id": highest_id + 1, "name": name, "on_shift": False, "round_robin": False}
     team_members.append(new_member)
     sort_json_list(team_members)
+    logging.info(f"{new_member['name']} added to the list")
     return "Member added"
 
 
@@ -67,7 +73,9 @@ def add_member():
 def delete_member():
     member_id = int(request.form['member_id'])
     global team_members
+    member_to_delete = next((member for member in team_members if member['id'] == member_id), None)
     team_members = [member for member in team_members if member['id'] != member_id]
+    logging.info("{} deleted from the list".format(member_to_delete['name']))
     sort_json_list(team_members)
     return "Member deleted"
 
@@ -75,6 +83,8 @@ def delete_member():
 @app.route('/api/shift', methods=['GET'])
 def get_current_shift():
     current_shift = next((member for member in team_members if member["on_shift"]), None)
+    if current_shift:
+        logging.info(f"{current_shift['name']} on shift")
     if not current_shift:
         current_shift = {"id": 0, "name": "None", "on_shift": True, "round_robin": False}
     return jsonify(current_shift)
@@ -104,6 +114,7 @@ def get_round_robin_shift():
         if next_member:
             next_member['on_shift'] = True
             current_shift = next_member
+        logging.info(f"{current_shift['name']} on shift - Round-robin")
     return jsonify(current_shift)
 
 
@@ -125,6 +136,7 @@ def activate_round_robin():
     for member in team_members:
         member['round_robin'] = True
     shuffle(team_members)
+    logging.info("Round-robin activated")
     return "Round robin activated"
 
 
@@ -134,6 +146,7 @@ def deactivate_round_robin():
         member['round_robin'] = False
         member['on_shift'] = False
     sort_json_list(team_members)
+    logging.info("Round-robin deactivated")
     return "Round robin deactivated"
 
 
