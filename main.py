@@ -15,11 +15,12 @@ team_members = [
     {"id": 6, "name": "Neha Singh", "on_shift": False, "round_robin": False},
     {"id": 7, "name": "Nicol Castillo", "on_shift": False, "round_robin": False},
     {"id": 8, "name": "Ranita Saha", "on_shift": False, "round_robin": False},
-    {"id": 9, "name": "Sunnykumar Choudhary", "on_shift": False, "round_robin": False},
-    {"id": 10, "name": "Tianting Shi", "on_shift": False, "round_robin": False},
-    {"id": 11, "name": "Veerabahu Thamizh Selvan V", "on_shift": False, "round_robin": False},
-    {"id": 12, "name": "Vidyashree G", "on_shift": False, "round_robin": False},
-    {"id": 13, "name": "Vikas Singh", "on_shift": False, "round_robin": False}
+    {"id": 9, "name": "Satdal Maity", "on_shift": False, "round_robin": False},
+    {"id": 10, "name": "Sunnykumar Choudhary", "on_shift": False, "round_robin": False},
+    {"id": 11, "name": "Tianting Shi", "on_shift": False, "round_robin": False},
+    {"id": 12, "name": "Veerabahu Thamizh Selvan V", "on_shift": False, "round_robin": False},
+    {"id": 13, "name": "Vidyashree G", "on_shift": False, "round_robin": False},
+    {"id": 14, "name": "Vikas Singh", "on_shift": False, "round_robin": False}
 ]
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
