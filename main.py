@@ -6,19 +6,19 @@ from random import shuffle
 app = Flask(__name__)
 
 team_members = [
-    {"id": 1, "name": "Abhishek Kumar", "on_shift": False, "round_robin": False},
-    {"id": 2, "name": "Bhawyya Mittal", "on_shift": False, "round_robin": False},
-    {"id": 3, "name": "Jingyu Wang", "on_shift": False, "round_robin": False},
-    {"id": 4, "name": "Mohammed Tahmeed", "on_shift": False, "round_robin": False},
-    {"id": 5, "name": "Neha Singh", "on_shift": False, "round_robin": False},
-    {"id": 6, "name": "Nicol Castillo", "on_shift": False, "round_robin": False},
-    {"id": 7, "name": "Ranita Saha", "on_shift": False, "round_robin": False},
-    {"id": 8, "name": "Sunnykumar Choudhary", "on_shift": False, "round_robin": False},
-    {"id": 9, "name": "Tianting Shi", "on_shift": False, "round_robin": False},
-    {"id": 10, "name": "Veerabahu Thamizh Selvan V", "on_shift": False, "round_robin": False},
-    {"id": 11, "name": "Vidyashree G", "on_shift": False, "round_robin": False},
-    {"id": 12, "name": "Vikas Singh", "on_shift": False, "round_robin": False},
-    {"id": 13, "name": "Abdul Patel", "on_shift": False, "round_robin": False}
+    {"id": 1, "name": "Abdul Patel", "on_shift": False, "round_robin": False},
+    {"id": 2, "name": "Abhishek Kumar", "on_shift": False, "round_robin": False},
+    {"id": 3, "name": "Bhawyya Mittal", "on_shift": False, "round_robin": False},
+    {"id": 4, "name": "Jingyu Wang", "on_shift": False, "round_robin": False},
+    {"id": 5, "name": "Mohammed Tahmeed", "on_shift": False, "round_robin": False},
+    {"id": 6, "name": "Neha Singh", "on_shift": False, "round_robin": False},
+    {"id": 7, "name": "Nicol Castillo", "on_shift": False, "round_robin": False},
+    {"id": 8, "name": "Ranita Saha", "on_shift": False, "round_robin": False},
+    {"id": 9, "name": "Sunnykumar Choudhary", "on_shift": False, "round_robin": False},
+    {"id": 10, "name": "Tianting Shi", "on_shift": False, "round_robin": False},
+    {"id": 11, "name": "Veerabahu Thamizh Selvan V", "on_shift": False, "round_robin": False},
+    {"id": 12, "name": "Vidyashree G", "on_shift": False, "round_robin": False},
+    {"id": 13, "name": "Vikas Singh", "on_shift": False, "round_robin": False}
 ]
 
 def sort_json_list(json_list):
@@ -55,7 +55,9 @@ def disable_shift():
 @app.route('/add_member', methods=['POST'])
 def add_member():
     name = request.form['name']
-    new_member = {"id": len(team_members) + 1, "name": name, "on_shift": False, "round_robin": False}
+    # Find the highest current ID and add 1 to it
+    highest_id = max(member['id'] for member in team_members) if team_members else 0
+    new_member = {"id": highest_id + 1, "name": name, "on_shift": False, "round_robin": False}
     team_members.append(new_member)
     sort_json_list(team_members)
     return "Member added"
