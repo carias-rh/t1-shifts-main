@@ -129,6 +129,7 @@ def update_round_robin():
         if member['id'] == member_id:
             member['round_robin'] = round_robin
             break
+    logging.info(f"{member['name']} round robin updated to {round_robin}")
     return "Round Robin Updated"
 
 
@@ -154,6 +155,13 @@ def deactivate_round_robin():
 @app.route('/api/members', methods=['GET'])
 def get_members():
     return jsonify(team_members)
+
+
+@app.route('/api/round_robin_status', methods=['GET'])
+def get_round_robin_status():
+    # Check if any member has round_robin set to True
+    is_round_robin_enabled = any(member['round_robin'] for member in team_members)
+    return jsonify({"round_robin_enabled": is_round_robin_enabled})
 
 
 if __name__ == '__main__':
